@@ -64,8 +64,8 @@ Argument EXTRA-ARGS: passes extra args to the checker."
        :standard-input t
        :error-patterns
        ((error line-start
-               "parse error in /dev/stdin around line " line
-               ", column " column ": " (message)
+               "error: " (message) " line " line
+               ", column " column " " (0+ not-newline)
                line-end))
        :modes (,mode)
        :predicate (lambda ()
