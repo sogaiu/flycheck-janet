@@ -56,7 +56,7 @@ Argument MODE: the mode in which this checker is activated.
 Argument EXTRA-ARGS: passes extra args to the checker."
   (let ((command
          (append
-          (list "janet" "-k" "/dev/stdin")
+          (list "janet" "-k" "-s")
           extra-args)))
     `(flycheck-define-checker ,name
        "See https://github.com/sogaiu/flycheck-janet"
