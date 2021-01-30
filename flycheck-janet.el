@@ -1,12 +1,9 @@
 ;;; flycheck-janet.el --- Add janet linter to flycheck
 
-;; This code borrows heavily from flycheck-clj-kondo:
-;; https://github.com/borkdude/flycheck-clj-kondo
-;;
 ;; Author: sogaiu
 ;; Created: 24 August 2020
-;; Version: 2020.08.24
-;; Homepage: https://github.com/sogaiu/flycheck-janet
+;; Version: 2021.01.31
+;; Homepage: https://codeberg.org/sogaiu/flycheck-janet
 ;; Package-Requires: ((flycheck "0.18"))
 
 ;;; Commentary:
@@ -47,46 +44,24 @@
 ;;; Code:
 (require 'flycheck)
 
-(defmacro flycheck-janet--define-checker
-    (name lang mode &rest extra-args)
-  "Internal macro to define checker.
-Argument NAME: the name of the checker.
-Argument LANG: language string.
-Argument MODE: the mode in which this checker is activated.
-Argument EXTRA-ARGS: passes extra args to the checker."
-  (let ((command
-         (append
-          (list "janet" "-k" "-s")
-          extra-args)))
-    `(flycheck-define-checker ,name
-       "See https://github.com/sogaiu/flycheck-janet"
-       :command ,command
-       :standard-input t
-       :error-patterns
-       ((error line-start
-               "error: " (message) " line " line
-               ", column " column " " (0+ not-newline)
-               line-end))
-       :modes (,mode)
-       :predicate (lambda ()
-                    (if buffer-file-name
-                        ;; If there is an associated file with buffer, use file name extension
-                        ;; to infer which language to turn on.
-                        (string= ,lang (file-name-extension buffer-file-name))
-                      ;; Else use the mode to infer which language to turn on.
-                      ,(pcase lang
-                         ("janet" `(equal 'janet-mode major-mode))))))))
+(flycheck-define-checker janet-janet
+  "Flycheck for Janet"
+  :command ("janet" "-k")
+  :standard-input t
+  :error-patterns
+  ((error line-start
+          (one-or-more (not ":")) ":"
+          line
+          ":"
+          column ": "
+          (message)
+          line-end))
+  :modes (a-janet-mode janet-mode)
+  :predicate (lambda ()
+               (memq major-mode '(a-janet-mode
+                                  janet-mode))))
 
-(defmacro flycheck-janet-define-checkers (&rest extra-args)
-  "Defines all janet checkers.
-Argument EXTRA-ARGS: passes extra arguments to the checkers."
-  `(progn
-     (flycheck-janet--define-checker janet-janet "janet" janet-mode ,@extra-args)
-     (flycheck-janet--define-checker janet-jdn "jdn" janet-mode ,@extra-args)
-     (dolist (element '(janet-janet janet-jdn))
-       (add-to-list 'flycheck-checkers element))))
-
-(flycheck-janet-define-checkers)
+(add-to-list 'flycheck-checkers 'janet-janet)
 
 (provide 'flycheck-janet)
 ;;; flycheck-janet.el ends here
