@@ -50,6 +50,7 @@
   :error-patterns
   ((error line-start
           (one-or-more (not ":")) ":"
+          (one-or-more (not ":")) ":"
           line
           ":"
           column ": "
