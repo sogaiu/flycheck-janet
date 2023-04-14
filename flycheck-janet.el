@@ -2,8 +2,7 @@
 
 ;; Author: sogaiu
 ;; Created: 24 August 2020
-;; Version: 2021.01.31
-;; Homepage: https://codeberg.org/sogaiu/flycheck-janet
+;; Version: 2023.04.14
 ;; Package-Requires: ((flycheck "0.18"))
 
 ;;; Commentary:
