@@ -56,10 +56,9 @@
           column ": "
           (message)
           line-end))
-  :modes (a-janet-mode janet-mode janet-ts-mode)
+  :modes (janet-mode janet-ts-mode)
   :predicate (lambda ()
-               (memq major-mode '(a-janet-mode
-                                  janet-mode
+               (memq major-mode '(janet-mode
                                   janet-ts-mode))))
 
 (add-to-list 'flycheck-checkers 'janet-janet)
