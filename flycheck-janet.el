@@ -44,7 +44,9 @@
 (require 'flycheck)
 
 (flycheck-define-checker janet-janet
-  "Flycheck for Janet"
+  "A checker for Janet using janet -k.
+
+See URL `https://github.com/janet-lang/janet'."
   :command ("janet" "-k")
   :standard-input t
   :error-patterns
