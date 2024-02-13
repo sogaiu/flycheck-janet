@@ -76,3 +76,7 @@ might help in diagnosing the situation:
 * `M-x flycheck-verify-setup`
 * `M-x flycheck-compile`
 
+## Credits
+
+* dleslie - straight.el setup info
+
