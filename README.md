@@ -6,28 +6,50 @@ linter (`janet -k`) with Emacs via
 
 ## Setup
 
-0. Ensure `janet` is installed and on your `PATH`.  Probably it makes
-   sense if [janet-mode](https://github.com/ALSchwalm/janet-mode/) or
-   [janet-ts-mode](https://github.com/sogaiu/janet-ts-mode) have been
-   setup as well.
+Ensure `janet` is installed and on your `PATH`.  Probably it makes
+sense if [janet-mode](https://github.com/ALSchwalm/janet-mode/) or
+[janet-ts-mode](https://github.com/sogaiu/janet-ts-mode) have been
+setup as well.
 
-1. Clone this repository.  For the sake of concrete exposition,
-   suppose the result ends up living under `~/src/flycheck-janet`.
+* Manual
 
-2. Add the following to your `init.el` (or .emacs-equivalent):
+  * Clone this repository.  For the sake of concrete exposition,
+    suppose the result ends up living under `~/src/flycheck-janet`.
+
+  * Add the following to your `init.el` (or .emacs-equivalent):
+
+      ```emacs-lisp
+      (add-to-list 'load-path
+                   (expand-file-name "~/src/flycheck-janet"))
+      (require 'flycheck-janet)
+      ```
+
+* Elpaca - add something like the following to your .emacs equivalent:
+
 
     ```emacs-lisp
-    (add-to-list 'load-path
-                 (expand-file-name "~/src/flycheck-janet"))
-    (require 'flycheck-janet)
+    (use-package flycheck-janet
+      :elpaca (:host github
+               :repo "sogaiu/flycheck-janet"
+               :files ("*.el")))
     ```
 
-3. If you don't already have some flycheck stuff setup, you might also
-   want to add:
-   
+* Straight.el - add something like the following to your .emacs
+  equivalent:
+
     ```emacs-lisp
-    (global-flycheck-mode)
+    (straight-use-package
+     '(flycheck-janet :host github
+                      :repo "sogaiu/flycheck-janet"
+                      :files ("*.el")))
+
+    (use-package flycheck-janet
+      :straight t)
     ```
+
+If you don't already have some flycheck stuff setup, you might also
+want to have a call to `global-flycheck-mode` somewhere appropriate in
+your .emacs equivalent.
 
 ## Verify Operation
 
@@ -36,7 +58,7 @@ linter (`janet -k`) with Emacs via
     ```janet
     (def a
     ```
-    
+
 2. Assuming `janet-mode` or `janet-ts-mode` are active, `M-x
    flycheck-list-errors` should bring up a buffer showing an error,
    but there should also be visual evidence in the buffer with
