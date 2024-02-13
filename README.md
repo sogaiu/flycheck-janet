@@ -38,13 +38,11 @@ setup as well.
   equivalent:
 
     ```emacs-lisp
-    (straight-use-package
-     '(flycheck-janet :host github
-                      :repo "sogaiu/flycheck-janet"
-                      :files ("*.el")))
-
-    (use-package flycheck-janet
-      :straight t)
+    (use-package
+      :straight (:type git
+                 :host github
+                 :repo "sogaiu/flycheck-janet"
+                 :files ("*.el")))
     ```
 
 If you don't already have some flycheck stuff setup, you might also
