@@ -43,6 +43,22 @@
 ;;; Code:
 (require 'flycheck)
 
+;; sample janet -k output
+;;
+;; 1. each warning appears on one line:
+;;
+;;   sample.janet:1:1: compile warning (strict): ...
+;;
+;; 2. an error is followed by an indented stacktrace:
+;;
+;;   error: sample.janet:3:1: compile error: ...
+;;     in ...
+
+;; see `'flycheck-redefine-standard-error-levels' for calls to
+;; `flycheck-define-error-level' which define the three levels: error,
+;; warning, and info.  only warning and error are used atm in
+;; :error-patterns below.
+
 (flycheck-define-checker janet-janet
   "A checker for Janet using janet -k.
 
@@ -50,8 +66,15 @@ See URL `https://github.com/janet-lang/janet'."
   :command ("janet" "-k")
   :standard-input t
   :error-patterns
-  ((error line-start
-          (one-or-more (not ":")) ":"
+  ((warning line-start
+            (one-or-more (not ":")) ":"
+            line
+            ":"
+            column ": "
+            (message)
+            line-end)
+   (error line-start
+          "error: "
           (one-or-more (not ":")) ":"
           line
           ":"
@@ -63,6 +86,90 @@ See URL `https://github.com/janet-lang/janet'."
                (memq major-mode '(janet-mode
                                   janet-ts-mode))))
 
+(flycheck-define-checker janet-relaxed
+  "A checker for Janet using janet -k -w relaxed.
+
+See URL `https://github.com/janet-lang/janet'."
+  :command ("janet" "-k" "-w" "relaxed")
+  :standard-input t
+  :error-patterns
+  ((warning line-start
+            (one-or-more (not ":")) ":"
+            line
+            ":"
+            column ": "
+            (message)
+            line-end)
+   (error line-start
+          "error: "
+          (one-or-more (not ":")) ":"
+          line
+          ":"
+          column ": "
+          (message)
+          line-end))
+  :modes (janet-mode janet-ts-mode)
+  :predicate (lambda ()
+               (memq major-mode '(janet-mode
+                                  janet-ts-mode))))
+
+(flycheck-define-checker janet-normal
+  "A checker for Janet using janet -k -w normal.
+
+See URL `https://github.com/janet-lang/janet'."
+  :command ("janet" "-k")
+  :standard-input t
+  :error-patterns
+  ((warning line-start
+            (one-or-more (not ":")) ":"
+            line
+            ":"
+            column ": "
+            (message)
+            line-end)
+   (error line-start
+          "error: "
+          (one-or-more (not ":")) ":"
+          line
+          ":"
+          column ": "
+          (message)
+          line-end))
+  :modes (janet-mode janet-ts-mode)
+  :predicate (lambda ()
+               (memq major-mode '(janet-mode
+                                  janet-ts-mode))))
+
+(flycheck-define-checker janet-strict
+  "A checker for Janet using janet -k -w strict.
+
+See URL `https://github.com/janet-lang/janet'."
+  :command ("janet" "-k" "-w" "strict")
+  :standard-input t
+  :error-patterns
+  ((warning line-start
+            (one-or-more (not ":")) ":"
+            line
+            ":"
+            column ": "
+            (message)
+            line-end)
+   (error line-start
+          "error: "
+          (one-or-more (not ":")) ":"
+          line
+          ":"
+          column ": "
+          (message)
+          line-end))
+  :modes (janet-mode janet-ts-mode)
+  :predicate (lambda ()
+               (memq major-mode '(janet-mode
+                                  janet-ts-mode))))
+
+;; use a similar line in .emacs equivalent if one of the other
+;; checkers, e.g. janet-relaxed, janet-normal, or janet-strict is
+;; desired instead
 (add-to-list 'flycheck-checkers 'janet-janet)
 
 (provide 'flycheck-janet)

@@ -62,6 +62,30 @@ your .emacs equivalent.
    but there should also be visual evidence in the buffer with
    Janet code indicating a problem.
 
+## Experimental Configuration
+
+There are now a number of checkers one may choose from:
+
+* `janet-janet` - same as `janet-normal`, the default
+* `janet-relaxed`
+* `janet-normal`
+* `janet-strict`
+
+`relaxed`, `normal` and `strict` correspond to values one may use for
+`janet`'s `-w` / `--lint-warn` command line option.  See the
+`janet(1)` man page for more details.
+
+To select a particular checker, e.g. `janet-strict` put the following
+in your `.emacs`-equivalent:
+
+```elisp
+(add-to-list 'flycheck-checkers 'janet-strict)
+```
+
+Likewise for `janet-relaxed` and `janet-normal`.  The default
+configuration is `janet-janet`, so nothing extra needs to be done to
+use that one.
+
 ## Troubleshooting
 
 If there are no errors displayed, one option that might help is to
