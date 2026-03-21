@@ -117,7 +117,7 @@ See URL `https://github.com/janet-lang/janet'."
   "A checker for Janet using janet -k -w normal.
 
 See URL `https://github.com/janet-lang/janet'."
-  :command ("janet" "-k")
+  :command ("janet" "-k" "-w" "normal")
   :standard-input t
   :error-patterns
   ((warning line-start
