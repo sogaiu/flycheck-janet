@@ -2,7 +2,7 @@
 
 ;; Author: sogaiu
 ;; Created: 24 August 2020
-;; Version: 2026.04.03
+;; Version: 2026.08.21
 ;; Package-Requires: ((flycheck "0.18"))
 
 ;;; Commentary:
@@ -121,12 +121,39 @@ each if these are defined."
 Takes a single argument `ERRORS' of flycheck error objects.
 Use with `:error-filter' portion of `flycheck-define-checker'.
 
-At the moment, it just massages file names."
+It massages file names and normalizes error positions.
+
+Janet reports many diagnostics at the column of the enclosing form's
+opening parenthesis, which are converted to explicit locations."
   (dolist (err errors)
     (when-let* ((fname (flycheck-error-filename err)))
       (if (and buffer-file-name (string-equal "stdin" fname))
           (setf (flycheck-error-filename err) buffer-file-name)
-        (setf (flycheck-error-filename err) (expand-file-name fname)))))
+        (setf (flycheck-error-filename err) (expand-file-name fname))))
+    ;; Normalize positions
+    (let ((line (flycheck-error-line err))
+          (column (flycheck-error-column err)))
+      (when line
+        ;; End-of-source parse errors are reported with column 0
+        ;; flycheck columns are 1-based.
+        (when (and column (< column 1))
+          (setf (flycheck-error-column err) 1)
+          (setq column 1))
+        ;; End-of-source diagnostics can land on an empty trailing
+        ;; line of the buffer. Move such errors onto preceding line.
+        (when (> line 1)
+          (save-excursion
+            (goto-char (point-max))
+            (when (and (bolp) (= (point-max) (line-beginning-position)))
+              (let ((empty-last-line (line-number-at-pos (point-max))))
+                (when (and (> empty-last-line 1) (>= line empty-last-line))
+                  (setq line (1- empty-last-line))
+                  (setf (flycheck-error-line err) line))))))
+        ;; Provide explicit zero-width end positions.
+        (unless (flycheck-error-end-line err)
+          (setf (flycheck-error-end-line err) line))
+        (unless (flycheck-error-end-column err)
+          (setf (flycheck-error-end-column err) (max 1 (or column 1)))))))
   errors)
 
 (defvar flycheck-janet-error-patterns
